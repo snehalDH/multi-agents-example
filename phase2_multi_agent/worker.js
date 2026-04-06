@@ -2,6 +2,7 @@ require("dotenv").config({ path: require("path").join(__dirname, "../.env") });
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const path = require("path");
 const { executeTool } = require(path.join(__dirname, "../tools"));
+const { buildWorkerSystemPrompt } = require("./prompt");
 
 // Workers only get fetch_url — least privilege principle
 const FETCH_TOOL = {
@@ -31,31 +32,7 @@ class WorkerAgent {
         const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
         const model = genAI.getGenerativeModel({
             model: "gemini-2.5-flash",
-            systemInstruction: `You are a specialist agent for the '${this.name}' module of the Microsoft "Generative AI for Beginners" course.
-
-Fetch ALL your assigned section URLs using fetch_url, then return ONLY a JSON object in this exact format:
-{
-  "module": "${this.name}",
-  "questions": [
-    {
-      "question": "...",
-      "type": "conceptual OR practical",
-      "expected_answer_points": ["point 1", "point 2", "point 3"]
-    },
-    {
-      "question": "...",
-      "type": "conceptual OR practical",
-      "expected_answer_points": ["point 1", "point 2", "point 3"]
-    }
-  ]
-}
-
-Rules:
-- Fetch every assigned section URL before generating questions
-- Generate exactly 2 interval review questions per section (total = sections × 2)
-- Questions must be conceptual or practical, testing real understanding
-- expected_answer_points: 3 bullet points an ideal answer should cover
-- Return ONLY valid JSON — no markdown fences, no explanation`,
+            systemInstruction: buildWorkerSystemPrompt(this.name),
             tools: [FETCH_TOOL],
         });
 
@@ -70,7 +47,9 @@ Rules:
             const calls = response.response.functionCalls();
 
             let text = "";
-            try { text = response.response.text(); } catch (_) {}
+            try {
+                text = response.response.text();
+            } catch (_) {}
 
             if (!calls || calls.length === 0) {
                 return text || `Worker '${this.name}' produced no output`;
