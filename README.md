@@ -1,5 +1,11 @@
 # Generative AI for Beginners — Agent Demo
 
+## Purpose
+
+A focused, minimal exercise to build genuine understanding of the multi-agent pattern from first principles — strip away frameworks and abstractions and see exactly what happens under the hood: how an agent loop runs, how agents are spawned and coordinated, and how they share work without sharing context.
+
+---
+
 An agent-based system that reads the first 5 sections of Microsoft's [Generative AI for Beginners](https://github.com/microsoft/generative-ai-for-beginners) course and generates structured learning content using Google Gemini.
 
 Built as a hands-on demonstration of single-agent and multi-agent architectures using the ReAct (Reason + Act) pattern.
@@ -8,12 +14,13 @@ Built as a hands-on demonstration of single-agent and multi-agent architectures 
 
 ## What It Does
 
-| Agent | Reads | Produces |
-|-------|-------|---------|
-| **Single Agent** | All 5 sections sequentially | Knowledge Map with summaries, concept connections, and 10 review questions |
-| **Multi-Agent (3 workers)** | 5 sections split across 3 parallel workers | Structured question bank with 10 interval questions |
+| Agent                       | Reads                                      | Produces                                                                   |
+| --------------------------- | ------------------------------------------ | -------------------------------------------------------------------------- |
+| **Single Agent**            | All 5 sections sequentially                | Knowledge Map with summaries, concept connections, and 10 review questions |
+| **Multi-Agent (3 workers)** | 5 sections split across 3 parallel workers | Structured question bank with 10 interval questions                        |
 
 ### Course Sections Covered
+
 1. **00 — Course Setup** — Development environment with GitHub Codespaces
 2. **01 — Introduction to Generative AI and LLMs** — How LLMs work, tokenization, capabilities
 3. **02 — Exploring and Comparing Different LLMs** — Model categories, Foundation Models vs LLMs, open-source vs proprietary
@@ -84,6 +91,7 @@ Orchestrator formats + writes multi_agent_output.md
 ## Setup
 
 ### Prerequisites
+
 - Node.js 18+
 - A [Google AI Studio](https://aistudio.google.com/) API key
 
@@ -123,6 +131,7 @@ Outputs are written to the `outputs/` directory.
 ### single_agent_output.md
 
 A Knowledge Map covering:
+
 - Section-by-section summaries (key concepts, learning objectives, prerequisites)
 - Concept dependency chain showing how sections build on each other
 - 2 review questions per section (10 total) with detailed answer guides
@@ -130,6 +139,7 @@ A Knowledge Map covering:
 ### multi_agent_output.md
 
 A question bank with 10 interval questions, each tagged with:
+
 - **Type**: `conceptual` or `practical`
 - **What a good answer covers**: 3 bullet points for self-assessment
 
@@ -137,17 +147,11 @@ A question bank with 10 interval questions, each tagged with:
 
 ## Key Concepts Demonstrated
 
-| Concept | Where |
-|---------|-------|
-| ReAct loop (tool calls → feed results back) | `agent.js`, `worker.js` |
-| Tool definitions for Gemini function calling | `tools.js` |
-| Parallel agent execution with `Promise.all` | `run.js` |
-| Least privilege (workers can't write output) | `worker.js` |
-| Orchestrator as pure formatter (no extra API call) | `run.js` |
-| Isolated context windows per agent | `worker.js` — each has its own `model.startChat()` |
-
----
-
-## Reference
-
-Pattern adapted from [`Growth_Snehal/agents-example`](../Growth_Snehal/agents-example/) which demonstrates the same ReAct architecture against a local file system.
+| Concept                                            | Where                                              |
+| -------------------------------------------------- | -------------------------------------------------- |
+| ReAct loop (tool calls → feed results back)        | `agent.js`, `worker.js`                            |
+| Tool definitions for Gemini function calling       | `tools.js`                                         |
+| Parallel agent execution with `Promise.all`        | `run.js`                                           |
+| Least privilege (workers can't write output)       | `worker.js`                                        |
+| Orchestrator as pure formatter (no extra API call) | `run.js`                                           |
+| Isolated context windows per agent                 | `worker.js` — each has its own `model.startChat()` |
