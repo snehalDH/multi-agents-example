@@ -1,4 +1,4 @@
-# Generative AI for Beginners — Agent Demo
+# Minimal Multi-Agent System
 
 ## Purpose
 
